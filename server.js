@@ -6,7 +6,9 @@ const { createClient } = require("@supabase/supabase-js");
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://yourfrontend.com"
+}));
 app.use(express.json());
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
