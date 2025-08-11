@@ -1,14 +1,26 @@
 const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
+const cors = require('cors');
 const { createClient } = require("@supabase/supabase-js");
-
-dotenv.config();
+require("dotenv").config();
 
 const app = express();
+
+const allowedOrigins = ['https://nkechi-evangelical-ministry.netlify.app'];
+
 app.use(cors({
-  origin: "https://nkechi-evangelical-ministry.netlify.app/"
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow curl/postman/no-origin requests
+
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
 }));
+
+app.options('*', cors()); // enable preflight requests
+
 app.use(express.json());
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
